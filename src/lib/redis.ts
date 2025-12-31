@@ -1,11 +1,9 @@
-// lib/redis.ts
+// Redis client (Upstash)
+// Candidate may use this for caching or atomic operations
+
 import { Redis } from "@upstash/redis";
+
 export const redis = Redis.fromEnv();
 
-export function productStockKey(productId: string) {
-  return `product:stock:${productId}`;
-}
-
-export function productCacheKey(productId: string) {
-  return `product:data:${productId}`;
-}
+export const productCacheKey = (id: string) => `product:${id}`;
+export const productListKey = "products:all";

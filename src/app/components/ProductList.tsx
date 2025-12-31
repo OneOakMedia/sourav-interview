@@ -1,17 +1,5 @@
-// app/components/ProductList.tsx
 "use client";
-
-/*
-Client component to fetch products and render them.
-Candidate tasks:
- - Implement client-side fetch of GET /api/products
- - Display products and show current stock
- - Integrate OrderForm to place an order
- - Handle success/failure and update UI accordingly (optimistic update optional)
-*/
-
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 type Product = {
   _id: string;
   name: string;
@@ -21,67 +9,36 @@ type Product = {
 };
 
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetchProducts();
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then(setProducts);
   }, []);
 
-  async function fetchProducts() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/products");
-      if (!res.ok) throw new Error("Failed to fetch products");
-      const data = await res.json();
-      setProducts(data);
-    } catch (err: any) {
-      setError(err.message || String(err));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function placeOrder(productId: string, qty: number) {
-    // Candidate TODO:
-    // - Call POST /api/order with JSON { productId, quantity: qty }
-    // - On success: update local UI to reflect new stock (either refetch products or update locally)
-    // - On failure: show appropriate message
-    try {
-      const res = await fetch("/api/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity: qty }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        alert("Order failed: " + (data?.error || "unknown"));
-        return;
-      }
-      // simple approach: refetch full list
-      await fetchProducts();
-      alert("Order placed successfully");
-    } catch (err: any) {
-      alert("Order error: " + String(err));
-    }
-  }
-
-  if (loading && !products) return <div>Loading products...</div>;
-  if (error) return <div>Error loading products: {error}</div>;
-  if (!products) return <div>No products</div>;
+  // TODO (Candidate):
+  // Implement order flow:
+  // - Call POST /api/order
+  // - Handle success / failure
+  // - Update UI accordingly
+  async function placeOrder(productId: string, qty: number) {}
 
   return (
     <div>
-      <h2>Products</h2>
+      <h2 className="text-center text-xl mb-10">Products</h2>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
-          <tr><th>Name</th><th>Price</th><th>Stock</th><th>Order</th></tr>
+          <tr className="text-left border-b">
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Order</th>
+          </tr>
         </thead>
         <tbody>
           {products.map((p) => (
-            <tr key={p._id}>
+            <tr key={p._id} className="py-4">
               <td>{p.name}</td>
               <td>${p.price.toFixed(2)}</td>
               <td>{p.stock}</td>
@@ -96,7 +53,13 @@ export default function ProductList() {
   );
 }
 
-function OrderControls({ product, onOrder }: { product: Product; onOrder: (id: string, qty: number) => void }) {
+function OrderControls({
+  product,
+  onOrder,
+}: {
+  product: Product;
+  onOrder: (id: string, qty: number) => void;
+}) {
   const [qty, setQty] = useState(1);
 
   return (
@@ -113,6 +76,7 @@ function OrderControls({ product, onOrder }: { product: Product; onOrder: (id: s
         onClick={() => onOrder(product._id, qty)}
         disabled={product.stock <= 0}
         style={{ marginLeft: 8 }}
+        className="border cursor-pointer p-1"
       >
         Order
       </button>

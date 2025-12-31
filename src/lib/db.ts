@@ -1,6 +1,5 @@
-// lib/db.ts
-// MongoDB connection helper (Mongoose). Candidate should not need to modify this file.
-// It caches connection for Next dev hot reloads.
+// MongoDB connection helper
+// ⚠️ Do NOT modify this file
 
 import mongoose from "mongoose";
 

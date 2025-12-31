@@ -1,8 +1,13 @@
 // scripts/seed.ts
-import { faker } from "@faker-js/faker";
-import mongoose from "mongoose";
-import { Product } from "@/models/Product";
+// First load environment variables
+import { loadEnvConfig } from "@next/env";
+loadEnvConfig(process.cwd());
+
+
 import { connectToMongoDB } from "@/lib/db";
+import { Product } from "@/models/Product";
+import { faker } from "@faker-js/faker";
+
 
 async function seedProducts() {
   await connectToMongoDB();

@@ -1,5 +1,5 @@
 // models/Product.ts
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IProduct extends Document {
   name: string;
